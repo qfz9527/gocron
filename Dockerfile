@@ -1,4 +1,5 @@
-FROM golang:1.9.1
+FROM registry.cn-shanghai.aliyuncs.com/lingdian/golang:codebase
+
 
 MAINTAINER XUFEI <1842070912@qq.com>
 
@@ -7,7 +8,7 @@ ENV TZ=Asia/Shanghai
 
 WORKDIR /go/src/github.com/ouqiang/
 
-RUN git clone https://github.com/ouqiang/gocron.git gocron && \
+RUN git clone git@gitlab.lingdianit.com:lingdianit/gocron.git gocron && \
     cd /go/src/github.com/ouqiang/ && \
 	go build -tags gocron -o gocron 
 
