@@ -25,7 +25,7 @@ var (
 	VersionFile string           // 版本号文件
 )
 
-func InitEnv(versionString string) {
+func InitEnv(versionString string, env string) {
 	logger.InitLogger()
 	wd, err := os.Getwd()
 	if err != nil {
@@ -35,7 +35,6 @@ func InitEnv(versionString string) {
 	ConfDir = AppDir + "/conf"
 	LogDir = AppDir + "/log"
 	DataDir = AppDir + "/data"
-	var env = getEnvironment()
 	AppConfig = ConfDir + "/" + env + "/app.ini"
 	VersionFile = ConfDir + "/.version"
 	createDirIfNotExists(ConfDir, LogDir, DataDir)

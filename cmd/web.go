@@ -44,7 +44,7 @@ func runWeb(ctx *cli.Context) {
 	// 设置运行环境
 	setEnvironment(ctx)
 	// 初始化应用
-	app.InitEnv(ctx.App.Version)
+	app.InitEnv(ctx.App.Version, getEnvironment())
 	// 初始化模块 DB、定时任务等
 	initModule()
 	// 捕捉信号,配置热更新等
@@ -98,12 +98,11 @@ func parseHost(ctx *cli.Context) string {
 	if ctx.IsSet("host") {
 		return ctx.String("host")
 	}
-
 	return "0.0.0.0"
 }
 
 
-func getEnvironment() {
+func getEnvironment() string {
 	env := os.Getenv('DEPLOY_ENV')
 	if (env == "test" || env == "dev" || env == "prod") {
 		return env;
@@ -113,7 +112,7 @@ func getEnvironment() {
 }
 
 func setEnvironment(ctx *cli.Context) {
-	env := getEnvironment()
+	var env = getEnvironment()
 	
 	switch env {
 	case "test":
