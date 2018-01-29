@@ -75,7 +75,7 @@ func initModule() {
 	models.Db = models.CreateDb()
 
 	// 版本升级
-	upgradeIfNeed()
+	//upgradeIfNeed()
 
 	// 初始化定时任务
 	service.ServiceTask.Initialize()
@@ -102,12 +102,19 @@ func parseHost(ctx *cli.Context) string {
 	return "0.0.0.0"
 }
 
-func setEnvironment(ctx *cli.Context) {
-	env := "prod"
-	if ctx.IsSet("env") {
-		env = ctx.String("env")
-	}
 
+func getEnvironment() {
+	env := os.Getenv('DEPLOY_ENV')
+	if (env == "test" || env == "dev" || env == "prod") {
+		return env;
+	}
+	return "prod";
+	
+}
+
+func setEnvironment(ctx *cli.Context) {
+	env := getEnvironment()
+	
 	switch env {
 	case "test":
 		macaron.Env = macaron.TEST

@@ -3,13 +3,14 @@ package app
 import (
 	"os"
 
-	"github.com/ouqiang/gocron/modules/logger"
-	"github.com/ouqiang/gocron/modules/setting"
-	"github.com/ouqiang/gocron/modules/utils"
+	"fmt"
 	"io/ioutil"
 	"strconv"
 	"strings"
-	"fmt"
+
+	"github.com/ouqiang/gocron/modules/logger"
+	"github.com/ouqiang/gocron/modules/setting"
+	"github.com/ouqiang/gocron/modules/utils"
 )
 
 var (
@@ -34,7 +35,8 @@ func InitEnv(versionString string) {
 	ConfDir = AppDir + "/conf"
 	LogDir = AppDir + "/log"
 	DataDir = AppDir + "/data"
-	AppConfig = ConfDir + "/app.ini"
+	var env = getEnvironment()
+	AppConfig = ConfDir + "/" + env + "/app.ini"
 	VersionFile = ConfDir + "/.version"
 	createDirIfNotExists(ConfDir, LogDir, DataDir)
 	Installed = IsInstalled()

@@ -1,0 +1,9 @@
+version: '2'
+services:
+    # center
+    center:
+        image: registry.cn-hangzhou.aliyuncs.com/lingdian/gocron:master
+        restart: always
+        ports:
+            - "80:5920"
+        command: ["/usr/bin/supervisord"]
