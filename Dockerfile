@@ -9,7 +9,7 @@ ENV TZ=Asia/Shanghai
 WORKDIR /go/src/github.com/ouqiang/
 
 RUN git clone -b lingdian git@gitlab.lingdianit.com:lingdianit/gocron.git gocron && \
-    cd /go/src/github.com/ouqiang/ && \
+    cd /go/src/github.com/ouqiang/gocron && \
 	go build -tags gocron -o gocron 
 
 ## add user
