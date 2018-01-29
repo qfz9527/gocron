@@ -1,6 +1,10 @@
 package cmd
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/ouqiang/gocron/models"
 	"github.com/ouqiang/gocron/modules/app"
 	"github.com/ouqiang/gocron/modules/logger"
@@ -9,9 +13,6 @@ import (
 	"github.com/ouqiang/gocron/service"
 	"github.com/urfave/cli"
 	"gopkg.in/macaron.v1"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 // web服务器默认端口
@@ -101,19 +102,17 @@ func parseHost(ctx *cli.Context) string {
 	return "0.0.0.0"
 }
 
-
 func getEnvironment() string {
-	env := os.Getenv('DEPLOY_ENV')
-	if (env == "test" || env == "dev" || env == "prod") {
-		return env;
+	env := os.Getenv("DEPLOY_ENV")
+	if env == "test" || env == "dev" || env == "prod" {
+		return env
 	}
-	return "prod";
-	
+	return "prod"
+
 }
 
 func setEnvironment(ctx *cli.Context) {
 	var env = getEnvironment()
-	
 	switch env {
 	case "test":
 		macaron.Env = macaron.TEST
