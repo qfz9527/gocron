@@ -1,0 +1,11 @@
+version: '2'
+services:
+    # center
+    center-new:
+        image: registry.cn-hangzhou.aliyuncs.com/lingdian/gocron
+        restart: always
+        environment:
+            - DEPLOY_ENV=dev
+        ports:
+            - "5920:5920"
+        command: ["/usr/bin/supervisord"]

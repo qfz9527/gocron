@@ -27,7 +27,7 @@ _testmain.go
 .idea
 log
 data
-conf
+#conf
 profile/*
 public/resource/javascript/vue.js
 gocron
