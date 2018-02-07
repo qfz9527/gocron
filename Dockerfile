@@ -8,7 +8,7 @@ ENV TZ=Asia/Shanghai
 
 WORKDIR /go/src/github.com/ouqiang/
 
-RUN git clone -b lingdian git@github.com:qfz9527/gocron.git gocron && \
+RUN git clone -b lingdian https://github.com/qfz9527/gocron.git gocron && \
     cd /go/src/github.com/ouqiang/gocron && \
 	go build -tags gocron -o gocron 
 
