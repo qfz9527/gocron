@@ -1,4 +1,5 @@
-// main gocron
+// Command gocron
+//go:generate statik -src=../../web/public -dest=../../internal -f
 
 package main
 
@@ -7,17 +8,21 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ouqiang/gocron/models"
-	"github.com/ouqiang/gocron/modules/app"
-	"github.com/ouqiang/gocron/modules/logger"
-	"github.com/ouqiang/gocron/modules/setting"
-	"github.com/ouqiang/gocron/routers"
-	"github.com/ouqiang/gocron/service"
+	"github.com/ouqiang/gocron/internal/models"
+	"github.com/ouqiang/gocron/internal/modules/app"
+	"github.com/ouqiang/gocron/internal/modules/logger"
+	"github.com/ouqiang/gocron/internal/modules/setting"
+	"github.com/ouqiang/gocron/internal/routers"
+	"github.com/ouqiang/gocron/internal/service"
+	"github.com/ouqiang/goutil"
 	"github.com/urfave/cli"
 	"gopkg.in/macaron.v1"
 )
 
-var AppVersion = "1.4"
+var (
+	AppVersion           = "1.5"
+	BuildDate, GitCommit string
+)
 
 // web服务器默认端口
 const DefaultPort = 5920
@@ -26,7 +31,7 @@ func main() {
 	cliApp := cli.NewApp()
 	cliApp.Name = "gocron"
 	cliApp.Usage = "gocron service"
-	cliApp.Version = AppVersion
+	cliApp.Version, _ = goutil.FormatAppVersion(AppVersion, GitCommit, BuildDate)
 	cliApp.Commands = getCommands()
 	cliApp.Flags = append(cliApp.Flags, []cli.Flag{}...)
 	cliApp.Run(os.Args)
@@ -64,13 +69,12 @@ func runWeb(ctx *cli.Context) {
 	// 设置运行环境
 	setEnvironment(ctx)
 	// 初始化应用
-	app.InitEnv(ctx.App.Version)
+	app.InitEnv(AppVersion)
 	// 初始化模块 DB、定时任务等
 	initModule()
 	// 捕捉信号,配置热更新等
 	go catchSignal()
 	m := macaron.Classic()
-
 	// 注册路由
 	routers.Register(m)
 	// 注册中间件.
