@@ -27,7 +27,6 @@ _testmain.go
 .idea
 log
 data
-conf
 profile/*
 /gocron
 /gocron-node

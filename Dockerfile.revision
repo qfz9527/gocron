@@ -1,3 +1,6 @@
 FROM ouqg/gocron:latest
 
+ADD ./conf/app.ini /app/conf/app.ini
+ADD ./conf/install.lock /app/conf/install.lock
+
 ENTRYPOINT ["/app/gocron", "web"]
