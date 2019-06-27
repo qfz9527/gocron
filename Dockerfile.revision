@@ -1,0 +1,3 @@
+FROM ouqg/gocron
+
+ENTRYPOINT ["/app/gocron", "web"]
