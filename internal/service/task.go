@@ -1,13 +1,14 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/ouqiang/goutil"
 
 	"github.com/jakecoffman/cron"
 	"github.com/ouqiang/gocron/internal/models"
@@ -160,7 +161,9 @@ func (task Task) Add(taskModel models.Task) {
 	}
 
 	cronName := strconv.Itoa(taskModel.Id)
-	err := serviceCron.AddFunc(taskModel.Spec, taskFunc, cronName)
+	err := goutil.PanicToError(func() {
+		serviceCron.AddFunc(taskModel.Spec, taskFunc, cronName)
+	})
 	if err != nil {
 		logger.Error("添加任务到调度器失败#", err)
 	}
@@ -230,7 +233,7 @@ func (h *HTTPHandler) Run(taskModel models.Task, taskUniqueId int64) (result str
 	}
 	// 返回状态码非200，均为失败
 	if resp.StatusCode != http.StatusOK {
-		return resp.Body, errors.New(fmt.Sprintf("HTTP状态码非200-->%d", resp.StatusCode))
+		return resp.Body, fmt.Errorf("HTTP状态码非200-->%d", resp.StatusCode)
 	}
 
 	return resp.Body, err

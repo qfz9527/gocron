@@ -5,14 +5,15 @@ import (
 	"strings"
 	"time"
 
+	macaron "gopkg.in/macaron.v1"
+
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/lib/pq"
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
+	_ "github.com/lib/pq"
 	"github.com/ouqiang/gocron/internal/modules/app"
 	"github.com/ouqiang/gocron/internal/modules/logger"
 	"github.com/ouqiang/gocron/internal/modules/setting"
-	"gopkg.in/macaron.v1"
 )
 
 type Status int8
@@ -31,12 +32,17 @@ const (
 )
 
 const (
-	Page        = 1      // 当前页数
-	PageSize    = 20     // 每页多少条数据
-	MaxPageSize = 100000 // 每次最多取多少条
+	Page        = 1    // 当前页数
+	PageSize    = 20   // 每页多少条数据
+	MaxPageSize = 1000 // 每次最多取多少条
 )
 
 const DefaultTimeFormat = "2006-01-02 15:04:05"
+
+const (
+	dbPingInterval = 90 * time.Second
+	dbMaxLiftTime  = 2 * time.Hour
+)
 
 type BaseModel struct {
 	Page     int `xorm:"-"`
@@ -73,6 +79,7 @@ func CreateDb() *xorm.Engine {
 	}
 	engine.SetMaxIdleConns(app.Setting.Db.MaxIdleConns)
 	engine.SetMaxOpenConns(app.Setting.Db.MaxOpenConns)
+	engine.SetConnMaxLifetime(dbMaxLiftTime)
 
 	if app.Setting.Db.Prefix != "" {
 		// 设置表前缀
@@ -104,7 +111,7 @@ func getDbEngineDSN(setting *setting.Setting) string {
 	dsn := ""
 	switch engine {
 	case "mysql":
-		dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s",
+		dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&allowNativePasswords=true",
 			setting.Db.User,
 			setting.Db.Password,
 			setting.Db.Host,
@@ -124,9 +131,13 @@ func getDbEngineDSN(setting *setting.Setting) string {
 }
 
 func keepDbAlived(engine *xorm.Engine) {
-	t := time.Tick(180 * time.Second)
+	t := time.Tick(dbPingInterval)
+	var err error
 	for {
 		<-t
-		engine.Ping()
+		err = engine.Ping()
+		if err != nil {
+			logger.Infof("database ping: %s", err)
+		}
 	}
 }

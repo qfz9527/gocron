@@ -1,3 +1,5 @@
+GO111MODULE=on
+
 .PHONY: build
 build: gocron node
 
@@ -60,6 +62,9 @@ run-vue:
 statik:
 	go get github.com/rakyll/statik
 	go generate ./...
+
+.PHONY: lint
+	golangci-lint run
 
 .PHONY: clean
 clean:
